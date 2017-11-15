@@ -1,0 +1,55 @@
+- name: AWS instance with S3
+  hosts: localhost
+  connection: local
+  gather_facts: False
+
+  tasks:
+  - name: Create an IAM role
+    iam:
+      aws_access_key: "{{aws_access_key}}"
+      aws_secret_key: "{{aws_secret_key}}"
+      iam_type: role
+      name: devops-ansible-role
+      state: present
+      trust_policy:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: ec2.amazonaws.com
+  - name: Give IAM role permissions for S3
+    iam_policy:
+      aws_access_key: "{{aws_access_key}}"
+      aws_secret_key: "{{aws_secret_key}}"
+      iam_type: role
+      iam_name: devops-ansible-role
+      policy_name: devops-ansible-policy
+      policy_document: "files/policy.json"
+      state: present
+  - name: Pause for role creation
+    pause:
+      minutes: 1
+  - name: Create an EC2 instance
+    ec2:
+      aws_access_key: "{{aws_access_key}}"
+      aws_secret_key: "{{aws_secret_key}}"
+      key_name: "{{key_name}}"
+      region: "{{aws_region}}"
+      group_id: "{{group_id}}"
+      instance_type: "{{instance_type}}"
+      instance_profile_name: "devops-ansible-role"
+      image: "{{ami_id}}"
+      wait: yes
+      exact_count: 1
+      count_tag:
+         Name: devops-ansible
+      instance_tags:
+         Name: devops-ansible
+    register: ec2
+  - name: Create an S3 bucket
+    s3_bucket:
+      aws_access_key: "{{aws_access_key}}"
+      aws_secret_key: "{{aws_secret_key}}"
+      name: "devops-ansible-s3"
+      region: "{{aws_region}}"

@@ -1,0 +1,4 @@
+*.swp
+*.retry
+ansible/playbooks/group_vars/all
+*.pem

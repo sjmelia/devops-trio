@@ -1,0 +1,8 @@
+aws_access_key: <access key>
+aws_secret_key: <secret_key>
+key_name: <keypair-name>
+aws_region: eu-west-2
+group_id: <group_id>
+instance_type: t2.micro
+ami_id: ami-e3051987
+
