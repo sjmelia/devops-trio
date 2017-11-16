@@ -25,7 +25,7 @@ before adding an EC2 instance for that profile
 - s3 bucket creation is dependent on a unique name being specified
 
 ```
-# prerequisite: ansible
+# prerequisite: ansible (I used  2.3.2.0)
 sudo pip install boto
 cd ansible
 cp all.default playbooks/group_vars/all
